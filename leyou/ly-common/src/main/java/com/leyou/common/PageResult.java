@@ -19,6 +19,7 @@ public class PageResult<T> {
         this.totalPage = totalPage;
     }
 
+
     //总页数
     private Integer totalPage;
 
