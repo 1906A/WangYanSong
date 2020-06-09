@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leyou.dao.SpecParamMapper">
+
+    <select id="findAllParams"  resultType="com.leyou.pojo.SpecParam">
+        SELECT id,cid,group_id,name,`numeric`,unit,generic,searching,segments FROM tb_spec_param WHERE group_id = #{groupId}
+    </select>
+
+    <insert id="addSpecParam" parameterType="com.leyou.pojo.SpecParam">
+        insert into tb_spec_param values(null,#{cid},#{groupId},#{name},#{numeric},#{unit},#{generic},#{searching},#{segments})
+    </insert>
+
+    <update id="updateSpecParam" parameterType="com.leyou.pojo.SpecParam">
+        update tb_spec_param set cid=#{cid},group_id=#{groupId},name=#{name},`numeric`=#{numeric},unit=#{unit},generic=#{generic},searching=#{searching},segments=#{segments} where id=#{id}
+    </update>
+
+    <select id="findParamByCid" parameterType="long" resultType="com.leyou.pojo.SpecParam">
+        SELECT * FROM tb_spec_param p  WHERE p.cid=#{cid}
+    </select>
+
+</mapper>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leyou.dao.SpecGroupMapper">
+
+    <insert id="addSpecGroup" parameterType="com.leyou.pojo.SpecGroup">
+        insert into tb_spec_group values(null,#{cid},#{name})
+    </insert>
+    <select id="findAllSpecGroup" parameterType="long" resultType="com.leyou.pojo.SpecGroup">
+        select * from tb_spec_group where cid=#{cid}
+    </select>
+</mapper>
