@@ -11,6 +11,8 @@ spring:
     allow-bean-definition-overriding: true  #调用多个feign客户端时需要开启配置，否则不能调用报错
   jackson:
     default-property-inclusion: non_null # 配置json处理时忽略空值
+  rabbitmq:
+    host: 192.168.58.132
 eureka:
   client:
     service-url:

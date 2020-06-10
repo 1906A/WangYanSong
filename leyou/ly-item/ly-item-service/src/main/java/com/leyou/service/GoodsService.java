@@ -9,6 +9,7 @@ import com.leyou.pojo.Spu;
 import com.leyou.pojo.SpuDetail;
 import com.leyou.pojo.Stock;
 import com.leyou.vo.SpuVo;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,9 @@ public class GoodsService {
 
     @Autowired
     StockMapper stockMapper;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     public void addGoods(SpuVo spuVo) {
 
@@ -73,10 +77,20 @@ public class GoodsService {
 
         });
 
+        //发送消息进行添加
+        sendMsg("insert",spu.getId());
 
 
+    }
 
 
+    /**
+     * 封装一个方法
+     * @param type
+     * @param spuId
+     */
+    public void sendMsg(String type,Long spuId){
+        amqpTemplate.convertAndSend("item.exchanges","item."+type,spuId);
     }
 
     public void updateGoods(SpuVo spuVo) {
@@ -96,14 +110,20 @@ public class GoodsService {
         spuDetail.setSpuId(spuVo.getId());
         spuDetailMapper.updateByPrimaryKeySelective(spuDetail);
 
+//        //删除sku
+//        List<Sku> skuList = spuVo.getSkus();
+//        skuList.forEach(sku -> {
+//            sku.setEnable(false);
+//            skuMapper.updateByPrimaryKeySelective(sku);
+//
+//            stockMapper.deleteByPrimaryKey(sku.getId());
+//        });
         //删除sku
-        List<Sku> skuList = spuVo.getSkus();
-        skuList.forEach(sku -> {
-            sku.setEnable(false);
-            skuMapper.updateByPrimaryKeySelective(sku);
-
-            stockMapper.deleteByPrimaryKey(sku.getId());
-        });
+    List<Sku> skus=  skuMapper.findSkuBySpuId(spuVo.getId());
+    skus.forEach(sku -> {
+        skuMapper.deleteByPrimaryKey(sku.getId());
+        stockMapper.deleteByPrimaryKey(sku.getId());
+    });
 
         //新增sku
         List<Sku> skuList1 = spuVo.getSkus();
@@ -121,5 +141,7 @@ public class GoodsService {
 
         });
 
+        //发送消息进行修改
+        sendMsg("update",spuVo.getId());
     }
 }

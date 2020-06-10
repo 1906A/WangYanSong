@@ -2,6 +2,7 @@ package com.leyou.controller;
 
 import com.leyou.client.*;
 import com.leyou.pojo.*;
+import com.leyou.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,59 +39,67 @@ public class GoodsDetialController {
     @Autowired
     TemplateEngine templateEngine;
 
+    @Autowired
+    GoodsService goodsService;
+
     @RequestMapping("item/{spuId}.html")
-    public String hello(@PathVariable("spuId") Long spuId, Model model){
+    public String item(@PathVariable("spuId") Long spuId, Model model){
 
-        //根据spuId查询商品集spu
-        Spu spu = spuClientServer.findSpuBySpuId(spuId);
-        model.addAttribute("spu",spu);
+//        //根据spuId查询商品集spu
+//        Spu spu = spuClientServer.findSpuBySpuId(spuId);
+//        model.addAttribute("spu",spu);
+//
+//        //根据spuId查询spuDetail扩展表
+//        SpuDetail spuDetail = spuClientServer.findSpuDetailBySpuId(spuId);
+//        model.addAttribute("spuDetail",spuDetail);
+//
+//        //根据spuId查询sku
+//        List<Sku> skuList = skuCilentServer.findSkuBySpuId(spuId);
+//        model.addAttribute("skuList",skuList);
+//
+//        //根据cid查询规格组和组对应的规格参数
+//        List<SpecGroup> specGroupList = specClientServer.findAllSpecGroupAndSpecParamByCid(spu.getCid3());
+//        specGroupList.forEach(specGroup -> {
+//            System.out.println(specGroup.getSpecParamList());
+//        });
+//        model.addAttribute("specGroupList",specGroupList);
+//
+//        //根据分类id查询
+//        //先把cid的三级id存入集合
+//        List<Long> cids=new ArrayList<>();
+//        cids.add(spu.getCid1());
+//        cids.add(spu.getCid2());
+//        cids.add(spu.getCid3());
+//        List<Category> categoryList = categoryCilentServer.findCnameByCids(cids);
+//        categoryList.forEach(c->{
+//            System.out.println(c.getName());
+//        });
+//        model.addAttribute("categoryList",categoryList);
+//
+//        //查询品牌
+//        Brand brand = brandClientServer.findBrandById(spu.getBrandId());
+//        model.addAttribute("brand",brand);
+//
+//        //查询规格参数
+//        List<SpecParam> paramList = specClientServer.findSpecParamsByCidAndGeneric(spu.getCid3(), false);
+//        HashMap<Long,String> paramMap=new HashMap<>();
+//        paramList.forEach(param->{
+//            paramMap.put(param.getId(),param.getName());
+//        });
+//
+//        model.addAttribute("paramMap",paramMap);
 
-        //根据spuId查询spuDetail扩展表
-        SpuDetail spuDetail = spuClientServer.findSpuDetailBySpuId(spuId);
-        model.addAttribute("spuDetail",spuDetail);
+        HashMap<String, Object> item = goodsService.item(spuId);
+        model.addAllAttributes(item);
 
-        //根据spuId查询sku
-        List<Sku> skuList = skuCilentServer.findSkuBySpuId(spuId);
-        model.addAttribute("skuList",skuList);
+        //创建静态模板
+        goodsService.createHtml(spuId);
 
-        //根据cid查询规格组和组对应的规格参数
-        List<SpecGroup> specGroupList = specClientServer.findAllSpecGroupAndSpecParamByCid(spu.getCid3());
-        specGroupList.forEach(specGroup -> {
-            System.out.println(specGroup.getSpecParamList());
-        });
-        model.addAttribute("specGroupList",specGroupList);
-
-        //根据分类id查询
-        //先把cid的三级id存入集合
-        List<Long> cids=new ArrayList<>();
-        cids.add(spu.getCid1());
-        cids.add(spu.getCid2());
-        cids.add(spu.getCid3());
-        List<Category> categoryList = categoryCilentServer.findCnameByCids(cids);
-        categoryList.forEach(c->{
-            System.out.println(c.getName());
-        });
-        model.addAttribute("categoryList",categoryList);
-
-        //查询品牌
-        Brand brand = brandClientServer.findBrandById(spu.getBrandId());
-        model.addAttribute("brand",brand);
-
-        //查询规格参数
-        List<SpecParam> paramList = specClientServer.findSpecParamsByCidAndGeneric(spu.getCid3(), false);
-        HashMap<Long,String> paramMap=new HashMap<>();
-        paramList.forEach(param->{
-            paramMap.put(param.getId(),param.getName());
-        });
-
-        model.addAttribute("paramMap",paramMap);
-
-        createHtml(spu,spuDetail,skuList,specGroupList,categoryList,brand,paramMap);
 
         return "item";
     }
 
-    private void createHtml(Spu spu, SpuDetail spuDetail, List<Sku> skuList, List<SpecGroup> specGroupList, List<Category> categoryList, Brand brand, HashMap<Long, String> paramMap) {
+/*    private void createHtml(Spu spu, SpuDetail spuDetail, List<Sku> skuList, List<SpecGroup> specGroupList, List<Category> categoryList, Brand brand, HashMap<Long, String> paramMap) {
 
         PrintWriter writer=null;
 
@@ -119,7 +128,7 @@ public class GoodsDetialController {
         }
 
 
-    }
+    }*/
 
 
 }

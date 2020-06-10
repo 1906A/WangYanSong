@@ -11,8 +11,10 @@ import com.leyou.pojo.Sku;
 import com.leyou.pojo.Spu;
 import com.leyou.pojo.SpuDetail;
 import com.leyou.vo.SpuVo;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -30,6 +32,11 @@ public class SpuService {
 
     @Autowired
     StockMapper stockMapper;
+
+    @Autowired
+    AmqpTemplate amqpTemplate;
+
+
 
 
     public  PageResult<SpuVo> findAllSpu(String key, Integer saleable, Integer page, Integer rows) {
@@ -49,6 +56,14 @@ public class SpuService {
           return  spuDetailMapper.selectByPrimaryKey(id);
     }
 
+    /**
+     * 封装一个方法
+     * @param type
+     * @param spuId
+     */
+    public void sendMsg(String type,Long spuId){
+        amqpTemplate.convertAndSend("item.exchanges","item."+type,spuId);
+    }
 
     public void deleteBySpuId(Long id) {
 
@@ -72,6 +87,7 @@ public class SpuService {
         spu.setValid(false);
         spuMapper.updateByPrimaryKeySelective(spu);
 
+        sendMsg("delete",id);
 
 
     }
@@ -84,7 +100,18 @@ public class SpuService {
         spuMapper.updateByPrimaryKey(spu);
     }
 
+    /**
+     * 根据spudId查询spu
+     * @param spuId
+     * @return
+     */
     public Spu findSpuBySpuId(Long spuId) {
        return spuMapper.selectByPrimaryKey(spuId);
+    }
+
+
+    public SpuVo findSpuVoBySpuId(Long spuId) {
+
+        return spuMapper.findSpuVoBySpuId(spuId);
     }
 }

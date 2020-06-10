@@ -7,6 +7,7 @@ import com.leyou.client.SpecClientServer;
 import com.leyou.client.SpuClientServer;
 import com.leyou.common.PageResult;
 import com.leyou.pojo.*;
+import com.leyou.repository.GoodsRepository;
 import com.leyou.vo.SpuVo;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class SpuService {
 
     @Autowired
     SpuClientServer spuClientServer;
+
+    @Autowired
+    GoodsRepository goodsRepository;
 
 
 
@@ -136,4 +140,23 @@ public class SpuService {
     }
 
 
+    /**
+     * 同步添加或修改
+     * @param spuId
+     * @throws Exception
+     */
+    public void editGoods(Long spuId) throws Exception {
+
+        //首先查到spu
+        SpuVo spuVo = spuClientServer.findSpuVoBySpuId(spuId);
+        //转换goods
+        Goods goods = this.convert(spuVo);
+        //添加或修改到es
+        goodsRepository.save(goods);
+    }
+
+    public void deleteGoods(Long spuId) {
+        goodsRepository.deleteById(spuId);
+
+    }
 }
