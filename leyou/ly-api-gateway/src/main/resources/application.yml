@@ -18,6 +18,7 @@ zuul:
   routes:
     item-service: /item/** # 将商品微服务映射到/item/**
     search-service: /search/** # 将商品微服务映射到/search/**
+    user-service: /user/** # 将商品微服务映射到/search/**
   host:
     socket-timeout-millis: 60000 #创建socket链接超时时间
     connect-timeout-millis: 60000 #链接超时时间
