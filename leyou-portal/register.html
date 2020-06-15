@@ -197,7 +197,7 @@
                         // 校验通过，提交表单
                         leyou.http.post("/user/register", leyou.stringify(this.user))
                             .then(resp => {
-                                if (resp.status === 201) {
+                                if (resp.status === 200) {
                                     // 注册成功
                                     alert("注册成功,即将跳转到登录页！");
                                     setTimeout(() => window.location = '/login.html', 2000);
