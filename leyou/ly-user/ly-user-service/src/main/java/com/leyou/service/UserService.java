@@ -64,4 +64,18 @@ public class UserService {
 
         return md5Hex;
     }
+
+    public User findUser(String username) {
+        User user=new User();
+        user.setUsername(username);
+
+       return userMapper.selectOne(user);
+    }
+
+    public User findUserByUsernameAndPassword(String username, String password) {
+       User user=new User();
+       user.setUsername(username);
+       user.setPassword(password);
+       return userMapper.selectOne(user);
+    }
 }

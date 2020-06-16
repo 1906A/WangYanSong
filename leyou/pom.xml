@@ -13,6 +13,7 @@
         <module>ly-goods-web</module>
         <module>ly-user</module>
         <module>ly-sms</module>
+        <module>ly-auth</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -3,6 +3,7 @@ package com.leyou.controller;
 import com.leyou.common.CodeUtils;
 import com.leyou.pojo.User;
 import com.leyou.service.UserService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -82,6 +83,37 @@ public class UserController {
             }
         }
     }
+
+    /*
+     * 根据用户名和密码查询用户
+     * */
+    @GetMapping("/query")
+    public User query(@RequestParam String username,@RequestParam String password){
+
+        System.out.println("查询用户："+username+"======"+password);
+        User user=  userService.findUserByUsernameAndPassword(username,password);
+        return user;
+    }
+
+//    /*
+//     * 根据用户名和密码登录
+//     * */
+//    @PostMapping("login")
+//    public String login(@RequestParam String username,@RequestParam String password){
+//        System.out.println("查询用户："+username+"======"+password);
+//
+//        String result = "1";
+//        User user = userService.findUser(username);
+//        if(user!=null){
+//            String newPassword= DigestUtils.md5Hex(password+user.getSalt());
+//            if(newPassword.equals(user.getPassword())){
+//                result = "0";
+//            }
+//        }
+//
+//        return result;
+//    }
+
 
 
 }

@@ -19,9 +19,13 @@ zuul:
     item-service: /item/** # 将商品微服务映射到/item/**
     search-service: /search/** # 将商品微服务映射到/search/**
     user-service: /user/** # 将商品微服务映射到/search/**
+    auth-service: /auth/** # 授权中心微服务
+    sms-service: /sms/**
   host:
     socket-timeout-millis: 60000 #创建socket链接超时时间
     connect-timeout-millis: 60000 #链接超时时间
+  add-host-header: true  #携带请求头信息
+  sensitive-headers: #禁止使用的头信息
 ribbon:
   ConnectTimeout: 60000 # 连接超时时间(ms)
   ReadTimeout: 60000 # 通信超时时间(ms)
