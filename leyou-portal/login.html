@@ -109,11 +109,13 @@
         },
         methods:{
             login(){
-                leyou.http.post("/user/login",leyou.stringify(this.form))
+                leyou.http.post("/auth/login",leyou.stringify(this.form))
                     .then(resp => {
-                        if(resp.status === 200){
+                        if(resp.data == 0){
                             const url = leyou.getUrlParam("returnUrl");
                             window.location = url || 'http://www.leyou.com';
+                        }else{
+                            this.msg = '用户名或密码错误';
                         }
                     })
                     .catch(() => this.msg = '用户名或密码错误')
