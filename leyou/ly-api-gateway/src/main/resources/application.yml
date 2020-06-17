@@ -18,7 +18,7 @@ zuul:
   routes:
     item-service: /item/** # 将商品微服务映射到/item/**
     search-service: /search/** # 将商品微服务映射到/search/**
-    user-service: /user/** # 将商品微服务映射到/search/**
+    user-service: /user/** # 将商品微服务映射到/user/**
     auth-service: /auth/** # 授权中心微服务
     sms-service: /sms/**
   host:
@@ -36,3 +36,16 @@ hystrix:
         isolation:
           thread:
             timeoutInMillisecond: 10000 # 熔断超时时长：10000ms
+leyou:
+  jwt:
+    pubKeyPath:  C:\\tmp\\rsa\\rsa.pub # 公钥地址
+    cookieName: token # cookie的名称
+  filter:
+    allowPaths:
+      - /api/auth
+      - /api/search
+      - /api/user/register
+      - /api/user/check
+      - /api/user/code
+      - /api/user/send
+      - /api/item

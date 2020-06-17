@@ -10,10 +10,9 @@ import com.leyou.pojo.User;
 import com.sun.deploy.net.HttpRequest;
 import jdk.nashorn.internal.ir.RuntimeNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,14 +49,41 @@ public class AuthController {
 
                 //存入cookies
                     CookieUtils.setCookie(request,response,jwtProperties.getCookieName(),token,jwtProperties.getExpire()*60);
+
+                    result="0";
                 }
 
-                result="0";
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         return result;
+    }
+
+    /**
+     * 当cookie失效之后重新设置cookie
+     */
+    @GetMapping("verify")
+    public Object verify(@CookieValue(value = "token",required = false) String token, HttpServletRequest request, HttpServletResponse response){
+
+        System.out.println("verify====="+token);
+        UserInfo userInfo =new UserInfo();
+        try {
+            //从token信息中解析获取用户信息
+            userInfo = JwtUtils.getInfoFromToken(token, jwtProperties.getPublicKey());
+
+            //防止过期，重新设置token
+            token = JwtUtils.generateToken(new UserInfo(userInfo.getId(), userInfo.getUsername()),
+                    jwtProperties.getPrivateKey(), jwtProperties.getExpire());
+
+            //返回token
+            CookieUtils.setCookie(request,response,jwtProperties.getCookieName(),token,jwtProperties.getExpire()*60);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return userInfo;
     }
 }

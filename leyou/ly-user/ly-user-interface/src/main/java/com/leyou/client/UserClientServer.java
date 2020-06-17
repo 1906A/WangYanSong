@@ -9,5 +9,5 @@ public interface UserClientServer {
      * 根据用户名和密码查询用户
      * */
     @GetMapping("/query")
-    public User query(@RequestParam String username, @RequestParam String password);
+    public User query(@RequestParam("username") String username,@RequestParam("password") String password);
 }
