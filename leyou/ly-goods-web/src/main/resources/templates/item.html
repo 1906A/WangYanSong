@@ -657,10 +657,12 @@
 						// 1、查询本地购物车
 						let carts = ly.store.get("carts") || [];
 						let cart = carts.find(c=>c.skuId===this.sku.id);
+						let cartselected={};
 						// 2、判断是否存在
 						if (cart) {
 							// 3、存在更新数量
 							cart.num += this.num;
+							cartselected=cart;
 						} else {
 							// 4、不存在，新增
 							cart = {
@@ -669,12 +671,16 @@
 								price: this.sku.price,
 								image: this.sku.images,
 								num: this.num,
-								ownSpec: this.ownSpec
+								ownSpec: this.sku.ownSpec
 							}
+							cartselected=cart;
 							carts.push(cart);
 						}
+
+
 						// 把carts写回localstorage
 						ly.store.set("carts", carts);
+						ly.store.set("cartselected",cartselected);
 						// 跳转
 						//window.location.href = "http://www.leyou.com/cart.html";
 					}

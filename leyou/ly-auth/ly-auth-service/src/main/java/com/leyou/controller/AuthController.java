@@ -10,7 +10,6 @@ import com.leyou.pojo.User;
 import com.sun.deploy.net.HttpRequest;
 import jdk.nashorn.internal.ir.RuntimeNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,10 +48,9 @@ public class AuthController {
 
                 //存入cookies
                     CookieUtils.setCookie(request,response,jwtProperties.getCookieName(),token,jwtProperties.getExpire()*60);
-
-                    result="0";
                 }
 
+                result="0";
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -83,6 +81,7 @@ public class AuthController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         return userInfo;
     }
