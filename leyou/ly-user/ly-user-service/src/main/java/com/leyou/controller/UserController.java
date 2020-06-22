@@ -1,6 +1,6 @@
 package com.leyou.controller;
 
-import com.leyou.common.CodeUtils;
+import com.leyou.utils.CodeUtils;
 import com.leyou.pojo.User;
 import com.leyou.service.UserService;
 import org.apache.commons.codec.digest.DigestUtils;

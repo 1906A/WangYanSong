@@ -1,4 +1,4 @@
-package com.leyou.common;
+package com.leyou.utils;
 
 public class CodeUtils {
 

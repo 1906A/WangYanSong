@@ -1,21 +1,16 @@
 package com.leyou.controller;
 
 import com.leyou.cilent.UserClient;
-import com.leyou.common.CodeUtils;
-import com.leyou.common.CookieUtils;
+import com.leyou.utils.CookieUtils;
 import com.leyou.common.JwtUtils;
 import com.leyou.common.UserInfo;
 import com.leyou.config.JwtProperties;
 import com.leyou.pojo.User;
-import com.sun.deploy.net.HttpRequest;
-import jdk.nashorn.internal.ir.RuntimeNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.PrivateKey;
 
 @RestController
 public class AuthController {

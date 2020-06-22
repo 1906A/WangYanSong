@@ -20,7 +20,8 @@ zuul:
     search-service: /search/** # 将商品微服务映射到/search/**
     user-service: /user/** # 将商品微服务映射到/user/**
     auth-service: /auth/** # 授权中心微服务
-    sms-service: /sms/**
+    sms-service: /sms/** #短信微服务
+    cart-service: /cart/**  #购物车微服务
   host:
     socket-timeout-millis: 60000 #创建socket链接超时时间
     connect-timeout-millis: 60000 #链接超时时间

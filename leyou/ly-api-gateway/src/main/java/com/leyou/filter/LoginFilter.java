@@ -1,6 +1,6 @@
 package com.leyou.filter;
 
-import com.leyou.common.CookieUtils;
+import com.leyou.utils.CookieUtils;
 import com.leyou.common.JwtUtils;
 import com.leyou.config.FilterProperties;
 import com.leyou.config.JwtProperties;

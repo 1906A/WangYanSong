@@ -651,6 +651,16 @@
 					this.user=res.data;
 					if(this.user.id!=null){
 						alert("已登录")
+						this.sku.num=this.num;
+
+						let skuVo=this.sku;
+
+						console.info(skuVo);
+
+						this.ly.http.post("/cart/add",skuVo).then(res=>{
+							alert("添加")
+						})
+
 					}else{
 						alert("未登录")
 						// 未登录保存在浏览器本地的localStorage中
