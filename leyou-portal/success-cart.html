@@ -618,9 +618,23 @@ $(function(){
 
         },
         created(){
-            //把获取到的sku赋值给对象
-          this.selectedSku = ly.store.get("cartselected");
-          this.ownSpec=Object.values(JSON.parse(this.selectedSku.ownSpec)).join("/");
+
+           this.ly.http("/auth/verify").then(res=>{
+                this.user=res.data;
+                if(this.user.id!=null){
+                    alert("已登录")
+                    this.ly.http.post("/cart/selectedSkuVo").then(res=>{
+                        this.selectedSku=res.data;
+                    })
+
+                }else{
+                    //把获取到的sku赋值给对象
+                    this.selectedSku = ly.store.get("cartselected");
+                    this.ownSpec=Object.values(JSON.parse(this.selectedSku.ownSpec)).join("/");
+
+                }
+
+            })
         }
     });
 </script>

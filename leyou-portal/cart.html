@@ -340,7 +340,7 @@
                     }
                     let price=0;
                     for(let i=0;i<newVal.length;i++){
-                        price=price+newVal[i].price*+newVal[i].num;
+                        price=price+newVal[i].price*newVal[i].num;
                     }
                     this.totalPrice=ly.formatPrice(price);
 
@@ -353,6 +353,7 @@
                 this.user=res.data;
                 if(this.user.id!=null){
                     alert("已登录")
+
                 }else{
                     //未登录状态
                     this.carts=ly.store.get("carts");
