@@ -12,5 +12,5 @@ eureka:
     lease-renewal-interval-in-seconds: 5
 leyou:
   jwt:
-    pubKeyPath:  C:\\tmp\\rsa\\rsa.pub # 公钥地址
+    pubKeyPath: C:\\tmp\\rsa\\rsa.pub # 公钥地址
     cookieName: token # cookie的名称

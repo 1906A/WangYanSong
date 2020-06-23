@@ -7,7 +7,11 @@ import com.leyou.pojo.Sku;
 import com.leyou.pojo.SkuVo;
 import com.leyou.utils.JsonUtils;
 import com.leyou.vo.SpuVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@EnableConfigurationProperties(JwtProperties.class)
+@Api("购物车服务接口")
 public class CartController {
 
     @Autowired
@@ -34,7 +40,9 @@ public class CartController {
      * @param token
      * @param skuVo
      */
-    @RequestMapping("add")
+    @PostMapping("add")
+    @ApiOperation(value = "根据用户登录之后解析token，添加商品", notes = "查询订单")
+    @ApiImplicitParam(name = "SkuVo", required = true, value = "选择的sku串")
     public void add(@CookieValue("token")String token, @RequestBody SkuVo skuVo){
 
         //获取用户信息
@@ -56,29 +64,31 @@ public class CartController {
                 //重新添加到redis
                 hashOps.put(skuVo.getId()+"",JsonUtils.serialize(redisSkuVo));
 
-                stringRedisTemplate.boundValueOps(prefixSelected+ skuVo.getId()).set(JsonUtils.serialize(redisSkuVo));
+                stringRedisTemplate.boundValueOps(prefixSelected+ userInfoToken.getId()).set(JsonUtils.serialize(redisSkuVo));
 
             }else {
                 //第一次添加到redis
                 hashOps.put(skuVo.getId()+"",JsonUtils.serialize(skuVo));
 
-                stringRedisTemplate.boundValueOps(prefixSelected+ skuVo.getId()).set(JsonUtils.serialize(skuVo));
+                stringRedisTemplate.boundValueOps(prefixSelected+ userInfoToken.getId()).set(JsonUtils.serialize(skuVo));
             }
         }
 
 
     }
 
-    @RequestMapping("selectedSkuVo")
-    public SkuVo selectedSkuVo(@CookieValue("token")String token){
+    @PostMapping("selectedSkuVo")
+    public SkuVo selectedSkuVo(@CookieValue("token") String token){
 
         //获取用户信息
         UserInfo userInfoToken = this.getUserInfoToken(token);
+        System.out.println(userInfoToken.getUsername());
 
-        BoundHashOperations<String, Object, Object> hashOps = stringRedisTemplate.boundHashOps(prefix+userInfoToken.getId());
+        //BoundHashOperations<String, Object, Object> hashOps = stringRedisTemplate.boundHashOps(prefix+userInfoToken.getId());
 
         String s= stringRedisTemplate.boundValueOps(prefixSelected+userInfoToken.getId()).get();
 
+        System.out.println(s.toString());
 
         SkuVo skuVo = JsonUtils.parse(s, SkuVo.class);
 
@@ -108,7 +118,7 @@ public class CartController {
                 SkuVo redisSkuVo = JsonUtils.parse(hashOps.get(skuVo.getId()+"").toString(), SkuVo.class);
 
                 //修改购物车的商品数量
-                redisSkuVo.setNum(redisSkuVo.getNum()+skuVo.getNum());
+                redisSkuVo.setNum(skuVo.getNum());
 
                 //重新添加到redis
                 hashOps.put(skuVo.getId()+"",JsonUtils.serialize(redisSkuVo));
@@ -137,7 +147,7 @@ public class CartController {
             //购物车
             BoundHashOperations<String, Object, Object> hashOps = stringRedisTemplate.boundHashOps(prefix+userInfoToken.getId());
 
-            hashOps.delete(id);
+            hashOps.delete(id+"");
         }
 
     }

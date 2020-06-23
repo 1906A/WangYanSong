@@ -15,6 +15,7 @@
         <module>ly-sms</module>
         <module>ly-auth</module>
         <module>ly-cart</module>
+        <module>leyou-order</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
