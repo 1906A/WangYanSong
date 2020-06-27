@@ -43,6 +43,7 @@ public class OrderService {
         // 生成orderId
         long orderId = idWorker.nextId();
         // 获取登录用户
+
         UserInfo user = LoginInterceptor.getLoginUser();
         // 初始化数据
         order.setBuyerNick(user.getUsername());
@@ -78,6 +79,7 @@ public class OrderService {
         // 查询订单详情
         OrderDetail detail = new OrderDetail();
         detail.setOrderId(id);
+        System.out.println(detail.getOrderId());
         List<OrderDetail> details = this.detailMapper.select(detail);
         order.setOrderDetails(details);
 

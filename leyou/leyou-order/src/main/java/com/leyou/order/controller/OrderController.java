@@ -49,6 +49,7 @@ public class OrderController {
     @ApiOperation(value = "根据订单编号查询订单，返回订单对象", notes = "查询订单")
     @ApiImplicitParam(name = "id", required = true, value = "订单的编号")
     public ResponseEntity<Order> queryOrderById(@PathVariable("id") Long id) {
+        System.out.println(id);
         Order order = this.orderService.queryById(id);
         if (order == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

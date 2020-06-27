@@ -28,7 +28,7 @@ eureka:
     lease-expiration-duration-in-seconds: 10
 
 mybatis:
-  type-aliases-package: com.leyou.item.pojo
+  type-aliases-package: com.leyou.order.pojo
   mapper-locations: mapper/OrderMapper.xml
   configuration:
     map-underscore-to-camel-case: true
