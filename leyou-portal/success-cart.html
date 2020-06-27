@@ -44,7 +44,7 @@ $(function(){
             <h3><i class="sui-icon icon-pc-right"></i>商品已成功加入购物车！</h3>
             <div class="goods">
                 <div class="left-good">
-                    <div class="left-pic"><img :src="selectedSku.image"></div>
+                    <div class="left-pic"><img :src="selectedSku.images"></div>
                     <div class="right-info">
                         <p class="title">{{selectedSku.title}}</p>
                         <p class="attr">颜色：{{ownSpec}} 数量：{{selectedSku.num}}</p>
@@ -623,6 +623,7 @@ $(function(){
                 this.user=res.data;
                 if(this.user.id!=null){
                     alert("已登录")
+                    alert(this.user.id);
                     this.ly.http.post("/cart/selectedSkuVo").then(res=>{
                         this.selectedSku=res.data;
                     })
@@ -631,7 +632,6 @@ $(function(){
                     //把获取到的sku赋值给对象
                     this.selectedSku = ly.store.get("cartselected");
                     this.ownSpec=Object.values(JSON.parse(this.selectedSku.ownSpec)).join("/");
-
                 }
 
             })

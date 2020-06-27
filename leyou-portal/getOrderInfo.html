@@ -116,8 +116,8 @@
 					</div>
 					<div class="step-cont">
 						<ul class="payType">
-							<li class="" >微信付款<span title="点击取消选择"></span></li>
-							<li class="selected">货到付款<span title="点击取消选择"></span></li>
+							<li :class="{selected: paymentType == 1}" @click="paymentType=1">微信付款<span title="点击取消选择"></span></li>
+							<li :class="{selected: paymentType == 2}" @click="paymentType=2">货到付款<span title="点击取消选择"></span></li>
 						</ul>
 					</div>
 					<div class="hr"></div>
@@ -125,22 +125,22 @@
 						<h5>送货清单</h5>
 					</div>
 					<div class="step-cont">
-						<ul class="send-detail">
+						<ul class="send-detail" v-for="sku in selectedSku">
 							<li >
 								<div class="sendGoods">
-									<ul class="yui3-g">
+									<ul class="yui3-g" >
 										<li class="yui3-u-1-6">
-											<span><img width="70px" height="70px" src="img/goods.png"/></span>
+											<span><img width="70px" height="70px" :src="sku.images"/></span>
 										</li>
 										<li class="yui3-u-7-12">
-											<div class="desc">macbook air 2017新款，带bar 顺畅装逼体验</div>
+											<div class="desc">{{sku.title}}</div>
 											<div class="seven">7天无理由退货</div>
 										</li>
 										<li class="yui3-u-1-12">
-											<div class="price">￥8848.00</div>
+											<div class="price">￥{{ly.formatPrice(sku.price*sku.num)}}</div>
 										</li>
 										<li class="yui3-u-1-12">
-											<div class="num">X1</div>
+											<div class="num">X{{sku.num}}</div>
 										</li>
 										<li class="yui3-u-1-12">
 											<div class="exit">有货</div>
@@ -172,28 +172,28 @@
 		<div class="order-summary">
 			<div class="static fr">
 				<div class="list">
-					<span><i class="number">1</i>件商品，总商品金额</span>
-					<em class="allprice">¥8848.00</em>
+					<span><i class="number">{{selectedSku.length}}</i>件商品，总商品金额</span>
+					<em class="allprice">¥{{totalPrice}}</em>
 				</div>
 				<div class="list">
 					<span>返现：</span>
-					<em class="money">0.00</em>
+					<em class="money">{{fanxian}}</em>
 				</div>
 				<div class="list">
 					<span>运费：</span>
-					<em class="transport">0.00</em>
+					<em class="transport">{{yunfei}}</em>
 				</div>
 			</div>
 		</div>
 		<div class="clearfix trade">
-			<div class="fc-price">应付金额:　<span class="price">¥8848</span></div>
+			<div class="fc-price">应付金额:　<span class="price">¥{{(totalPrice-fanxian+yunfei).toFixed(2)}}</span></div>
 			<div class="fc-receiverInfo">
 				寄送至:{{addresses[selectedAddress].address}}
 				收货人：{{addresses[selectedAddress].name}} {{addresses[selectedAddress].phone}}
 			</div>
 		</div>
 		<div class="submit">
-			<a class="sui-btn btn-danger btn-xlarge" href="pay.html">提交订单</a>
+			<a class="sui-btn btn-danger btn-xlarge"  @click="createOrder">提交订单</a>
 		</div>
 	</div>
 
@@ -228,10 +228,68 @@
                     }
 				],
 				selectedAddress: 0,
-
+				selectedSku:[],
+				ly,
+				totalPrice:0,
+				fanxian: 475.20,
+				yunfei: 0,
+				paymentType: 1
             },
 			components:{
                 shortcut: () => import("/js/pages/shortcut.js")
+			},
+			created(){
+            	this.selectedSku=ly.store.get("js_selected");
+            	let price=0;
+            	for (let i=0 ; i<this.selectedSku.length ;i++){
+					price=price+this.selectedSku[i].price*this.selectedSku[i].num;
+				}
+            	this.totalPrice=ly.formatPrice(price);
+			},
+			methods:{
+				createOrder(){
+
+            		let orderDetail=[];
+
+					for (let i=0;i<this.selectedSku.length;i++){
+						let obj={
+							"skuId": this.selectedSku[i].id,
+							"num": this.selectedSku[i].num,
+							"title": this.selectedSku[i].title,
+							"price": this.selectedSku[i].price,
+							"ownSpec": this.selectedSku[i].ownSpec,
+							"image": this.selectedSku[i].images
+						}
+
+						orderDetail.push(obj)
+					}
+
+            		let order={
+						"totalPay": this.totalPrice*100,
+						"postFee": 0,
+						"paymentType": this.paymentType,
+						"actualPay": (this.totalPrice-this.fanxian+this.yunfei).toFixed(2)*100,
+						"buyerMessage":null,
+						"buyerNick": "huge",
+						"orderDetails":orderDetail,
+						"receiver": "锋哥",
+						"receiverMobile": "15800000000",
+						"receiverState": "上海",
+						"receiverCity": "上海",
+						"receiverDistrict": "浦东新签",
+						"receiverAddress": "航头镇航头路18号传智播客3号楼",
+						"receiverZip":"210000",
+						"invoiceType":0,
+						"sourceType":2
+					}
+					alert(order);
+            		this.ly.http.post("/order/order",order).then(resp=>{
+							alert("创建订单成功")
+							location.href="http://www.leyou.com/pay.html?orderId="+resp.data;
+					}).catch(resp=>{
+						alert("创建订单失败")
+					})
+				}
 			}
         });
 	</script>

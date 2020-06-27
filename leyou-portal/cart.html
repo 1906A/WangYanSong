@@ -28,7 +28,7 @@
 
         <!--All goods-->
         <div class="allgoods">
-            <h4>全部商品<span>11</span></h4>
+            <h4>全部商品<span>{{cartNum}}</span></h4>
             <div class="cart-main">
                 <div class="yui3-g cart-th">
                     <div class="yui3-u-1-4"><input type="checkbox" value="false" v-model="allSelected" @click="selectAll"/> 全部</div>
@@ -48,7 +48,7 @@
                                 </li>
                                 <li class="yui3-u-11-24">
                                     <div class="good-item" >
-                                        <div class="item-img"> <img :src="cart.image" width="80px" height="80px"> </div>
+                                        <div class="item-img"> <img :src="cart.images" width="80px" height="80px"> </div>
                                         <div class="item-msg">
 												<span style="line-height:70px ">
 													{{cart.title}}
@@ -92,7 +92,7 @@
                         <span><em>已节省：</em><i>-¥20.00</i></span>
                     </div>
                     <div class="sumbtn">
-                        <a class="sum-btn"  href="getOrderInfo.html"  target="_blank">结算</a>
+                        <a class="sum-btn"  href="getOrderInfo.html" @click="toPay" target="_blank" >结算</a>
                     </div>
                 </div>
             </div>
@@ -268,9 +268,23 @@
             carts:[],
             selected:[],
             allSelected:true,
-            totalPrice:0
+            totalPrice:0,
+            cartNum:0
         },
         methods:{
+            toPay(){
+                ly.http.get("/auth/verify").then(res=> {
+                    this.user = res.data;
+                    if (this.user.id != null) {
+                        alert("已登录")
+                        ly.store.set("js_selected",this.selected);
+                        window.open("http://www.leyou.com/getOrderInfo.html",target="_blank");
+
+                    } else {
+                        location.href="http://www.leyou.com/login.html?returnUrl="+location.href;
+                    }
+                })
+            },
             jian(cart){
                 if(cart.num>1){
                     cart.num --;
@@ -279,6 +293,9 @@
                     this.user = res.data;
                     if (this.user.id != null) {
                         alert("已登录")
+                        ly.http.post("/cart/update",cart).then(res=> {
+                            alert("修改购物车，减少数量")
+                        })
                     } else {
                         ly.store.set("carts",this.carts);
 
@@ -297,6 +314,9 @@
                     this.user = res.data;
                     if (this.user.id != null) {
                         alert("已登录")
+                        ly.http.post("/cart/update",cart).then(res=> {
+                            alert("修改购物车，增加数量")
+                        })
                     } else {
                         ly.store.set("carts",this.carts);
 
@@ -315,11 +335,19 @@
                     this.selected=this.carts;
                 }
             },
-            deleteCart(i){
+            deleteCart(cart,i){
                 ly.http.get("/auth/verify").then(res=> {
                     this.user = res.data;
                     if (this.user.id != null) {
                         alert("已登录")
+                        let id=cart.id;
+                        console.info(id);
+                        ly.http.post("/cart/delete?id="+id).then(res=> {
+                            alert("删除购物车")
+                            window.location.reload();
+                        })
+
+
                     } else {
                         // 未登录购物车
                         this.carts.splice(i, 1);
@@ -341,6 +369,7 @@
                     let price=0;
                     for(let i=0;i<newVal.length;i++){
                         price=price+newVal[i].price*newVal[i].num;
+                        this.cartNum=newVal[i].num;
                     }
                     this.totalPrice=ly.formatPrice(price);
 
@@ -353,7 +382,10 @@
                 this.user=res.data;
                 if(this.user.id!=null){
                     alert("已登录")
-
+                    this.ly.http.post("/cart/query").then(res=>{
+                        this.carts=res.data;
+                        this.selected=this.carts;
+                    })
                 }else{
                     //未登录状态
                     this.carts=ly.store.get("carts");
